@@ -6,7 +6,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/question.dart';
 import '../models/user_data.dart';
-import '../utils/hash_utils.dart';
 import '../utils/database_helper.dart';
 import '../utils/excel_to_sqlite_converter.dart';
 

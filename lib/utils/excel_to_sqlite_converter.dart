@@ -35,7 +35,7 @@ class ExcelToSqliteConverter {
 
               // 创建Question对象
               Question question = Question(
-                id: id.isNotEmpty ? id : 'excel_${DateTime.now().millisecondsSinceEpoch}_${row}',
+                id: id.isNotEmpty ? id : 'excel_${DateTime.now().millisecondsSinceEpoch}_$row',
                 type: type,
                 question: questionText,
                 options: options,
@@ -182,7 +182,7 @@ class ExcelToSqliteConverter {
 
               // 创建Question对象
               Question question = Question(
-                id: id.isNotEmpty ? id : 'excel_${DateTime.now().millisecondsSinceEpoch}_${row}',
+                id: id.isNotEmpty ? id : 'excel_${DateTime.now().millisecondsSinceEpoch}_$row',
                 type: type,
                 question: questionText,
                 options: options,

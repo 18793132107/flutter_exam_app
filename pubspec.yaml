@@ -29,7 +29,6 @@ flutter:
 
   assets:
     - assets/
-    - assets/fonts/
     - assets/questions.json
 
   # fonts:
