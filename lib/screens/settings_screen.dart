@@ -67,12 +67,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await prefs.setInt('exam_judgment_count', int.tryParse(_controllers['exam_judgment_count']!.text) ?? 10);
     await prefs.setInt('font_size', int.tryParse(_controllers['font_size']!.text) ?? 16);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('设置已保存！'),
-        backgroundColor: Colors.orange.shade400, // 温暖的背景色
-      ),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('设置已保存！'),
+          backgroundColor: Colors.orange.shade400, // 温暖的背景色
+        ),
+      );
+    }
   }
 
   @override

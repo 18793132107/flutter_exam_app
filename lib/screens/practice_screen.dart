@@ -239,33 +239,22 @@ class _PracticeScreenState extends State<PracticeScreen> {
                   final isSelected = _selectedOptions.contains(entry.key);
                   
                   return Card(
-                    child: ListTile(
+                    child: RadioListTile<String>(
                       title: Text('${entry.key}. ${entry.value}'),
-                      leading: Radio<String>(
-                        value: entry.key,
-                        groupValue: question.type != '多选题' 
-                            ? _selectedOptions.isNotEmpty 
-                                ? _selectedOptions.first 
-                                : null
-                            : null, // 多选题不使用单选按钮
-                        onChanged: question.type != '多选题'
-                            ? (value) {
-                                _selectOption(entry.key);
-                              }
-                            : null,
-                      ),
-                      trailing: question.type == '多选题'
-                          ? Checkbox(
-                              value: isSelected,
-                              onChanged: (value) {
-                                _selectOption(entry.key);
-                              },
-                            )
+                      value: entry.key,
+                      groupValues: question.type != '多选题' 
+                          ? _selectedOptions.isNotEmpty 
+                              ? _selectedOptions.first 
+                              : null
+                          : null, // 多选题不使用单选按钮
+                      onChanged: question.type != '多选题'
+                          ? (value) {
+                              _selectOption(entry.key);
+                            }
                           : null,
+                      selected: isSelected,
                       tileColor: isSelected ? Colors.orange.shade100 : null, // 温暖的橙色选择状态
-                      onTap: () {
-                        _selectOption(entry.key);
-                      },
+                      controlAffinity: ListTileControlAffinity.platform,
                     ),
                   );
                 }).toList(),
