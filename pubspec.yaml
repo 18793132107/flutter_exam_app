@@ -1,0 +1,41 @@
+name: flutter_exam_app
+description: 智能试题练习系统
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  provider: ^6.0.5
+  path_provider: ^2.0.15  # 降低版本以兼容Dart 2.17.1
+  shared_preferences: ^2.0.15  # 降低版本以兼容Dart 2.17.1
+  sqflite: ^2.3.0
+  path: ^1.8.0
+  excel: 4.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/fonts/
+    - assets/questions.json
+
+  # fonts:
+    # - family: SimHei
+      # fonts:
+        # - asset: assets/fonts/simhei.ttf
+    # - family: Roboto
+      # fonts:
+        # - asset: assets/fonts/Roboto-Regular.ttf

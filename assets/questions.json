@@ -1,0 +1,72 @@
+{
+  "questions": [
+    {
+      "id": "q001",
+      "type": "单选题",
+      "question": "Flutter是使用哪种编程语言开发的？",
+      "options": {
+        "A": "Java",
+        "B": "Kotlin",
+        "C": "Dart",
+        "D": "Swift"
+      },
+      "correctAnswer": "C",
+      "analysis": "Flutter框架由Google开发，使用Dart语言作为其编程语言。",
+      "sourceFile": "questions.json"
+    },
+    {
+      "id": "q002",
+      "type": "单选题",
+      "question": "在Dart中，以下哪个关键字用于定义一个常量？",
+      "options": {
+        "A": "var",
+        "B": "let",
+        "C": "const",
+        "D": "dynamic"
+      },
+      "correctAnswer": "C",
+      "analysis": "在Dart中，const关键字用于定义编译时常量。",
+      "sourceFile": "questions.json"
+    },
+    {
+      "id": "q003",
+      "type": "多选题",
+      "question": "以下哪些是Flutter中的布局组件？",
+      "options": {
+        "A": "Column",
+        "B": "Row",
+        "C": "Stack",
+        "D": "View"
+      },
+      "correctAnswer": "ABC",
+      "analysis": "Column、Row和Stack都是Flutter中的布局组件，而View不是。",
+      "sourceFile": "questions.json"
+    },
+    {
+      "id": "q004",
+      "type": "判断题",
+      "question": "Dart是一种面向对象的编程语言。",
+      "options": {
+        "A": "正确",
+        "B": "错误"
+      },
+      "correctAnswer": "A",
+      "analysis": "Dart是一种面向对象的编程语言，支持类和基于mixin的继承。",
+      "sourceFile": "questions.json"
+    },
+    {
+      "id": "q005",
+      "type": "单选题",
+      "question": "在Flutter中，哪个组件用于垂直排列子组件？",
+      "options": {
+        "A": "Row",
+        "B": "Column",
+        "C": "Stack",
+        "D": "Container"
+      },
+      "correctAnswer": "B",
+      "analysis": "Column组件用于垂直排列子组件，而Row用于水平排列。",
+      "sourceFile": "questions.json"
+    }
+  ]
+}
