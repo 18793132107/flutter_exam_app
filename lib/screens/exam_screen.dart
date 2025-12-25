@@ -17,7 +17,8 @@ class ExamScreen extends StatefulWidget {
 
 class _ExamScreenState extends State<ExamScreen> {
   int _currentQuestionIndex = 0;
-  List<String> _selectedOptions = [];
+  String? _selectedOption;
+  List<String> _selectedMultiOptions = [];
   List<Question> _examQuestions = [];
   Map<String, String> _examAnswers = {};
   DateTime? _examStartTime;
@@ -114,24 +115,31 @@ class _ExamScreenState extends State<ExamScreen> {
     final question = _examQuestions[_currentQuestionIndex];
 
     if (question.type == '多选题') {
+      // 多选题需要单独处理
       setState(() {
-        if (_selectedOptions.contains(option)) {
-          _selectedOptions.remove(option);
+        if (_selectedMultiOptions.contains(option)) {
+          _selectedMultiOptions.remove(option);
         } else {
-          _selectedOptions.add(option);
+          _selectedMultiOptions.add(option);
         }
+        _selectedOption = null; // 清除单选题的选项
       });
     } else {
+      // 单选题
       setState(() {
-        _selectedOptions = [option];
+        _selectedOption = option;
+        _selectedMultiOptions.clear(); // 清除多选题的选项
       });
     }
   }
 
   void _saveAnswer() {
-    if (_selectedOptions.isNotEmpty) {
-      final question = _examQuestions[_currentQuestionIndex];
-      final userAnswer = _selectedOptions.join('');
+    final question = _examQuestions[_currentQuestionIndex];
+    final userAnswer = question.type == '多选题' 
+        ? _selectedMultiOptions.join('')
+        : _selectedOption ?? '';
+    
+    if (userAnswer.isNotEmpty) {
       setState(() {
         _examAnswers[question.id] = userAnswer;
       });
@@ -139,7 +147,12 @@ class _ExamScreenState extends State<ExamScreen> {
   }
 
   void _submitAnswer() {
-    if (_selectedOptions.isEmpty) {
+    final question = _examQuestions[_currentQuestionIndex];
+    final userAnswer = question.type == '多选题' 
+        ? _selectedMultiOptions.join('')
+        : _selectedOption ?? '';
+    
+    if (userAnswer.isEmpty) {
       _showMessage('请先选择一个答案');
       return;
     }
@@ -153,7 +166,17 @@ class _ExamScreenState extends State<ExamScreen> {
       _saveAnswer();
       setState(() {
         _currentQuestionIndex--;
-        _selectedOptions = _examAnswers[_examQuestions[_currentQuestionIndex].id]?.split('') ?? [];
+        final question = _examQuestions[_currentQuestionIndex];
+        if (question.type == '多选题') {
+          _selectedOption = null;
+          _selectedMultiOptions.clear();
+          if (_examAnswers.containsKey(question.id)) {
+            _selectedMultiOptions.addAll(_examAnswers[question.id]!.split(''));
+          }
+        } else {
+          _selectedOption = _examAnswers[question.id];
+          _selectedMultiOptions.clear();
+        }
       });
     }
   }
@@ -163,7 +186,17 @@ class _ExamScreenState extends State<ExamScreen> {
       _saveAnswer();
       setState(() {
         _currentQuestionIndex++;
-        _selectedOptions = _examAnswers[_examQuestions[_currentQuestionIndex].id]?.split('') ?? [];
+        final question = _examQuestions[_currentQuestionIndex];
+        if (question.type == '多选题') {
+          _selectedOption = null;
+          _selectedMultiOptions.clear();
+          if (_examAnswers.containsKey(question.id)) {
+            _selectedMultiOptions.addAll(_examAnswers[question.id]!.split(''));
+          }
+        } else {
+          _selectedOption = _examAnswers[question.id];
+          _selectedMultiOptions.clear();
+        }
       });
     }
   }
@@ -300,26 +333,33 @@ class _ExamScreenState extends State<ExamScreen> {
             Expanded(
               child: ListView(
                 children: question.options.entries.map((entry) {
-                  final isSelected = _selectedOptions.contains(entry.key);
+                  final isMultiSelect = question.type == '多选题';
+                  final isSelected = isMultiSelect 
+                      ? _selectedMultiOptions.contains(entry.key)
+                      : _selectedOption == entry.key;
                   
                   return Card(
-                    child: RadioListTile<String>(
-                      title: Text('${entry.key}. ${entry.value}'),
-                      value: entry.key,
-                      groupValues: question.type != '多选题' 
-                          ? _selectedOptions.isNotEmpty 
-                              ? _selectedOptions.first 
-                              : null
-                          : null, // 多选题不使用单选按钮
-                      onChanged: question.type != '多选题'
-                          ? (value) {
+                    child: isMultiSelect
+                        ? CheckboxListTile(
+                            title: Text('${entry.key}. ${entry.value}'),
+                            value: isSelected,
+                            onChanged: (bool? value) {
                               _selectOption(entry.key);
-                            }
-                          : null,
-                      selected: isSelected,
-                      tileColor: isSelected ? Colors.orange.shade100 : null, // 温暖的橙色选择状态
-                      controlAffinity: ListTileControlAffinity.platform,
-                    ),
+                            },
+                            tileColor: isSelected ? Colors.orange.shade100 : null, // 温暖的橙色选择状态
+                          )
+                        : RadioListTile<String>(
+                            title: Text('${entry.key}. ${entry.value}'),
+                            value: entry.key,
+                            groupValue: _selectedOption,
+                            onChanged: (String? value) {
+                              if (value != null) {
+                                _selectOption(value);
+                              }
+                            },
+                            tileColor: isSelected ? Colors.orange.shade100 : null, // 温暖的橙色选择状态
+                            controlAffinity: ListTileControlAffinity.platform,
+                          ),
                   );
                 }).toList(),
               ),

@@ -13,7 +13,8 @@ class PracticeScreen extends StatefulWidget {
 
 class _PracticeScreenState extends State<PracticeScreen> {
   int _currentQuestionIndex = 0;
-  List<String> _selectedOptions = [];
+  String? _selectedOption;
+  List<String> _selectedMultiOptions = [];
   int _correctCount = 0;
   List<Question> _questions = [];
   bool _isLoading = true;
@@ -50,27 +51,36 @@ class _PracticeScreenState extends State<PracticeScreen> {
     
     if (question.type == '多选题') {
       setState(() {
-        if (_selectedOptions.contains(option)) {
-          _selectedOptions.remove(option);
+        if (_selectedMultiOptions.contains(option)) {
+          _selectedMultiOptions.remove(option);
         } else {
-          _selectedOptions.add(option);
+          _selectedMultiOptions.add(option);
         }
+        _selectedOption = null; // 清除单选题的选项
       });
     } else {
       setState(() {
-        _selectedOptions = [option];
+        _selectedOption = option;
+        _selectedMultiOptions.clear(); // 清除多选题的选项
       });
     }
   }
 
   void _submitAnswer() {
-    if (_selectedOptions.isEmpty) {
+    final question = _questions[_currentQuestionIndex];
+    String userAnswer;
+    
+    if (question.type == '多选题') {
+      userAnswer = _selectedMultiOptions.join('');
+    } else {
+      userAnswer = _selectedOption ?? '';
+    }
+    
+    if (userAnswer.isEmpty) {
       _showMessage('请先选择一个答案');
       return;
     }
 
-    final question = _questions[_currentQuestionIndex];
-    final userAnswer = _selectedOptions.join('');
     final isCorrect = question.isCorrect(userAnswer);
 
     if (isCorrect) {
@@ -142,7 +152,8 @@ class _PracticeScreenState extends State<PracticeScreen> {
     if (_currentQuestionIndex < _questions.length - 1) {
       setState(() {
         _currentQuestionIndex++;
-        _selectedOptions = [];
+        _selectedOption = null;
+        _selectedMultiOptions.clear();
       });
     } else {
       _showFinalResult();
@@ -236,26 +247,33 @@ class _PracticeScreenState extends State<PracticeScreen> {
             Expanded(
               child: ListView(
                 children: question.options.entries.map((entry) {
-                  final isSelected = _selectedOptions.contains(entry.key);
+                  final isMultiSelect = question.type == '多选题';
+                  final isSelected = isMultiSelect 
+                      ? _selectedMultiOptions.contains(entry.key)
+                      : _selectedOption == entry.key;
                   
                   return Card(
-                    child: RadioListTile<String>(
-                      title: Text('${entry.key}. ${entry.value}'),
-                      value: entry.key,
-                      groupValues: question.type != '多选题' 
-                          ? _selectedOptions.isNotEmpty 
-                              ? _selectedOptions.first 
-                              : null
-                          : null, // 多选题不使用单选按钮
-                      onChanged: question.type != '多选题'
-                          ? (value) {
+                    child: isMultiSelect
+                        ? CheckboxListTile(
+                            title: Text('${entry.key}. ${entry.value}'),
+                            value: isSelected,
+                            onChanged: (bool? value) {
                               _selectOption(entry.key);
-                            }
-                          : null,
-                      selected: isSelected,
-                      tileColor: isSelected ? Colors.orange.shade100 : null, // 温暖的橙色选择状态
-                      controlAffinity: ListTileControlAffinity.platform,
-                    ),
+                            },
+                            tileColor: isSelected ? Colors.orange.shade100 : null, // 温暖的橙色选择状态
+                          )
+                        : RadioListTile<String>(
+                            title: Text('${entry.key}. ${entry.value}'),
+                            value: entry.key,
+                            groupValue: _selectedOption,
+                            onChanged: (String? value) {
+                              if (value != null) {
+                                _selectOption(value);
+                              }
+                            },
+                            tileColor: isSelected ? Colors.orange.shade100 : null, // 温暖的橙色选择状态
+                            controlAffinity: ListTileControlAffinity.platform,
+                          ),
                   );
                 }).toList(),
               ),
